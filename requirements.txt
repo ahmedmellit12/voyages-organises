@@ -1,4 +1,4 @@
-streamlit==1.26.0  # For the Streamlit framework
-pandas==1.5.3      # For data manipulation and reading/writing Excel files
-openpyxl==3.1.2    # Required for handling Excel files with pandas
-streamlit-tags==1.2.2  # For the st_tags widget
+streamlit
+pandas
+openpyxl
+streamlit-tags
