@@ -5,10 +5,8 @@ from streamlit_tags import st_tags
 
 # Define the columns
 columns = [
-    "Nom de l'agence", "Site Web", "Contact", 
-    "Titre du circuit", "Durée", "Prix par personne", 
-    "Localisation de l'agence", "Destinations", "Activités", 
-    "Hébergement",
+    "Nom de l'agence", "Site Web", "Contact", "Titre du circuit", "Durée",
+    "Prix", "Localisation de l'agence", "Destinations", "Activités", "Hébergement",
 ]
 
 # File path for the Excel file
@@ -26,10 +24,12 @@ st.title("Analyse du marché des voyages organisés - Saisie de données")
 # Create a grid of two columns
 col1, col2 = st.columns(2)
 
+tag_list = ["Contact", "Hébergement", "Destinations", "Activités"]
+
 # Create input fields for each column, distributing them evenly
 entry = {}
 for i, column in enumerate(columns):
-    if column in ["Hébergement", "Destinations", "Activités"]:
+    if column in tag_list:
         with (col1 if i % 2 == 0 else col2):
             entry[column] = st_tags(
                 label=column,
@@ -42,9 +42,9 @@ for i, column in enumerate(columns):
             entry[column] = st.text_input(column)
 
 # Submit button
-if st.button("Envoyer"):
+if st.button("Envoyer") and entry:
     # Convert list fields to strings for saving to Excel
-    for field in ["Hébergement", "Destinations", "Activités"]:
+    for field in tag_list:
         entry[field] = ", ".join(entry[field])
     
     # Append the new entry to the DataFrame
