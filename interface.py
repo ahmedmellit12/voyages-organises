@@ -5,7 +5,7 @@ from streamlit_tags import st_tags
 
 # Define the columns
 columns = [
-    "Ad ID", "Nom de l'agence", "Site Web", "Contact", "Titre du circuit", "Durée",
+    "Nom de l'agent", "Ad ID", "Nom de l'agence", "Site Web", "Contact", "Titre du circuit", "Durée",
     "Prix", "Localisation de l'agence", "Destinations", "Activités", "Hébergement"
 ]
 
@@ -20,20 +20,26 @@ else:
 
 # Define required fields
 required_fields = [
-    "Ad ID", "Nom de l'agence", "Contact", "Titre du circuit", "Durée", "Prix"
+    "Nom de l'agent", "Ad ID", "Nom de l'agence", "Contact", "Titre du circuit", "Durée", "Prix", "Localisation de l'agence"
 ]
+
+# Predefined options for "Nom de l'agent"
+agent_options = ["Sélectionner l'agent", "Achraf", "Abdelali", "Ahmed"]
 
 # Streamlit interface
 st.title("Analyse du marché des voyages organisés - Saisie de données")
+
+# Add "Nom de l'agent" as the first field
+entry = {}
+entry["Nom de l'agent"] = st.selectbox("Nom de l'agent", options=agent_options)
 
 # Create a grid of two columns
 col1, col2 = st.columns(2)
 
 tag_list = ["Contact", "Hébergement", "Destinations", "Activités"]
 
-# Create input fields for each column, distributing them evenly
-entry = {}
-for i, column in enumerate(columns):
+# Add other fields
+for i, column in enumerate(columns[1:]):  # Skip "Nom de l'agent" as it's already handled
     if column in tag_list:
         with (col1 if i % 2 == 0 else col2):
             entry[column] = st_tags(
@@ -55,6 +61,10 @@ if st.button("Envoyer"):
         if (isinstance(entry[field], list) and not entry[field])  # Check for empty lists
         or (isinstance(entry[field], str) and not entry[field].strip())  # Check for empty strings
     ]
+    # Check if the agent is not selected
+    if entry["Nom de l'agent"] == "Sélectionner l'agent":
+        missing_fields.append("Nom de l'agent")
+    
     if missing_fields:
         st.error(f"Les champs suivants sont obligatoires : {', '.join(missing_fields)}")
     else:
