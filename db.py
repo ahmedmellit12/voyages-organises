@@ -25,57 +25,53 @@ try:
         st.write("### Data Preview")
         st.dataframe(df)
 
-        # Allow the user to delete a record
-        st.write("### Delete a Record")
-        if "Ad ID" in df.columns:
-            ad_ids = df["Ad ID"].tolist()
-            selected_ad_id = st.selectbox("Select Ad ID to delete", options=ad_ids)
+        # Create a unique selection field combining "Ad ID" and "Price"
+        if "Ad ID" in df.columns and "Prix" in df.columns:
+            # Generate selection options as "Ad ID - Price"
+            selection_options = df.apply(lambda row: f"{row['Ad ID']} - {row['Prix']}", axis=1).tolist()
+            selected_record = st.selectbox("Select a record (Ad ID - Price)", options=selection_options)
 
-            # Button to confirm deletion
-            if st.button("Delete Selected Record"):
-                # Delete the record from MongoDB
-                result = collection.delete_one({"Ad ID": selected_ad_id})
-                if result.deleted_count > 0:
-                    st.success(f"Record with Ad ID '{selected_ad_id}' deleted successfully!")
-                else:
-                    st.error(f"Failed to delete the record with Ad ID '{selected_ad_id}'.")
+            # Parse the selected value into Ad ID and Price
+            if selected_record:
+                selected_ad_id, selected_price = selected_record.split(" - ")
 
-                # Refresh the data display
-                data = list(collection.find({}, {"_id": 0}))  # Fetch updated data
-                if data:
-                    df = pd.DataFrame(data)
-                    st.dataframe(df)
-                else:
-                    st.warning("No data left in the collection.")
+                # Display the selected record
+                record_to_edit = collection.find_one({"Ad ID": selected_ad_id, "Prix": selected_price}, {"_id": 0})
+                st.write("Selected Record:")
+                st.json(record_to_edit)
 
-        # Allow the user to modify a specific record
-        st.write("### Modify a Record")
-        if "Ad ID" in df.columns:
-            selected_ad_id = st.selectbox("Select Ad ID to modify", options=ad_ids, key="modify")
+                # Modify functionality
+                st.write("### Modify the Record")
+                column_to_edit = st.selectbox("Select Column to Modify", options=df.columns)
+                new_value = st.text_input(f"Enter new value for {column_to_edit}")
 
-            # Display the selected record
-            record_to_edit = collection.find_one({"Ad ID": selected_ad_id}, {"_id": 0})
-            st.write("Selected Record:")
-            st.json(record_to_edit)
+                if st.button("Update Record"):
+                    if new_value.strip():
+                        # Update the record in MongoDB
+                        update_result = collection.update_one(
+                            {"Ad ID": selected_ad_id, "Prix": selected_price},
+                            {"$set": {column_to_edit: new_value}}
+                        )
+                        if update_result.modified_count > 0:
+                            st.success(f"Record with Ad ID '{selected_ad_id}' and Price '{selected_price}' successfully updated!")
+                        else:
+                            st.error(f"No changes were made to the record.")
 
-            # Choose a column to modify
-            column_to_edit = st.selectbox("Select Column to Modify", options=df.columns)
-
-            # Input the new value
-            new_value = st.text_input(f"Enter new value for {column_to_edit}")
-
-            # Button to confirm modification
-            if st.button("Update Record"):
-                if new_value.strip():
-                    # Update the record in MongoDB
-                    update_result = collection.update_one(
-                        {"Ad ID": selected_ad_id},
-                        {"$set": {column_to_edit: new_value}}
-                    )
-                    if update_result.modified_count > 0:
-                        st.success(f"Record with Ad ID '{selected_ad_id}' successfully updated!")
+                        # Refresh the data display
+                        data = list(collection.find({}, {"_id": 0}))  # Fetch updated data
+                        df = pd.DataFrame(data)
+                        st.dataframe(df)
                     else:
-                        st.error(f"No changes were made to the record with Ad ID '{selected_ad_id}'.")
+                        st.error("New value cannot be empty!")
+
+                # Delete functionality
+                st.write("### Delete the Record")
+                if st.button("Delete Selected Record"):
+                    delete_result = collection.delete_one({"Ad ID": selected_ad_id, "Prix": selected_price})
+                    if delete_result.deleted_count > 0:
+                        st.success(f"Record with Ad ID '{selected_ad_id}' and Price '{selected_price}' deleted successfully!")
+                    else:
+                        st.error(f"Failed to delete the record.")
 
                     # Refresh the data display
                     data = list(collection.find({}, {"_id": 0}))  # Fetch updated data
@@ -84,8 +80,8 @@ try:
                         st.dataframe(df)
                     else:
                         st.warning("No data left in the collection.")
-                else:
-                    st.error("New value cannot be empty!")
+        else:
+            st.error("The required columns ('Ad ID', 'Prix') are missing in the database.")
     else:
         st.warning("No data found in the MongoDB collection.")
 except Exception as e:
