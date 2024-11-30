@@ -18,7 +18,7 @@ db = client["voyagesorganises"]  # Database name
 collection = db["voyages"]       # Collection name
 
 # Streamlit app
-st.title("Chatbot with MongoDB-Pandas and LangChain")
+st.title("AI Organized Trip Advisor")
 
 @st.cache_data
 def fetch_data():
