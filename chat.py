@@ -68,9 +68,5 @@ if not df.empty:
         except Exception as e:
             error_message = f"Une erreur s'est produite : {e}"
             st.session_state.messages.append({"role": "assistant", "content": error_message})
-
-    # Show data overview
-    st.write("### Aperçu des données")
-    st.dataframe(df)
 else:
     st.warning("Aucune donnée trouvée dans la collection MongoDB.")
