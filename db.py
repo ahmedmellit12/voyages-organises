@@ -11,7 +11,7 @@ db = client["voyagesorganises"]  # Nom de la base de données
 collection = db["voyages"]       # Nom de la collection
 
 # Titre de l'application
-st.title("Visualiseur, Éditeur et Outil de Suppression de Données MongoDB")
+st.title("Outil d'administration")
 
 try:
     # Récupérer les données de MongoDB
