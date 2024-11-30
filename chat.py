@@ -6,63 +6,63 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 import os
 
-# Set your OpenAI API key using Streamlit secrets for better security
+# Définissez votre clé API OpenAI à l'aide des secrets de Streamlit pour une meilleure sécurité
 os.environ["OPENAI_API_KEY"] = st.secrets["openai"]["api_key"]
 
-# MongoDB connection
+# Connexion à MongoDB
 connection_string = "mongodb+srv://honorablesvoyages:OJ5m95MyLHGqwOAN@voyagesorganises.x7xz0.mongodb.net/?retryWrites=true&w=majority&appName=voyagesorganises"
 client = MongoClient(connection_string)
 
-# Database and collection
-db = client["voyagesorganises"]  # Database name
-collection = db["voyages"]       # Collection name
+# Base de données et collection
+db = client["voyagesorganises"]  # Nom de la base de données
+collection = db["voyages"]       # Nom de la collection
 
-# Streamlit app
-st.title("AI Organized Trip Advisor")
+# Application Streamlit
+st.title("Conseiller de Voyages Organisés par IA")
 
 @st.cache_data
 def fetch_data():
-    """Fetch data from MongoDB and convert it to a Pandas DataFrame."""
-    data = list(collection.find({}, {"_id": 0}))  # Exclude the "_id" field
+    """Récupère les données de MongoDB et les convertit en DataFrame Pandas."""
+    data = list(collection.find({}, {"_id": 0}))  # Exclure le champ "_id"
     if data:
         return pd.DataFrame(data)
     else:
-        return pd.DataFrame()  # Return an empty DataFrame if no data
+        return pd.DataFrame()  # Retourner un DataFrame vide si aucune donnée
 
-# Fetch data from the MongoDB database
+# Récupération des données de la base MongoDB
 df = fetch_data()
 
 if not df.empty:
-    # Initialize the LangChain LLM
+    # Initialiser le LLM de LangChain
     llm = OpenAI(temperature=0)
 
-    # Define a custom prompt template for interacting with the data
+    # Définir un modèle d'invite personnalisé pour interagir avec les données
     prompt_template = """
-        You are an expert travel consultant with deep knowledge of the Moroccan travel market. You have access to the following data collected from Meta Ads Library:
+        Vous êtes un expert en voyages avec une connaissance approfondie du marché marocain. Vous avez accès aux données suivantes collectées à partir de la bibliothèque de publicités Meta :
         {data}
 
-        Please analyze the data and provide a detailed answer to the user's question. Make sure to highlight trends, pricing patterns, popular destinations, activities, and other important insights that can help Ahmed make better decisions about organizing trips to Morocco.
+        Veuillez analyser les données et fournir une réponse détaillée à la question de l'utilisateur. Assurez-vous de mettre en évidence les tendances, les modèles de prix, les destinations populaires, les activités et d'autres informations importantes qui peuvent aider Ahmed à mieux organiser ses voyages au Maroc.
 
-        User's Question: {question}
+        Question de l'utilisateur : {question}
     """
 
     prompt = PromptTemplate(input_variables=["data", "question"], template=prompt_template)
 
-    # Define the LLMChain
+    # Définir le LLMChain
     llm_chain = LLMChain(llm=llm, prompt=prompt)
 
-    # Chat interface
-    user_input = st.text_input("Ask a question about the data:", "")
+    # Interface utilisateur pour poser une question
+    user_input = st.text_input("Posez une question sur les données :", "")
 
     if user_input:
         try:
-            # Run the LLMChain with the user question and the data
+            # Exécuter LLMChain avec la question de l'utilisateur et les données
             response = llm_chain.run({"data": df.to_string(index=False), "question": user_input})
-            st.write("### Response:")
+            st.write("### Réponse :")
             st.write(response)
         except Exception as e:
-            st.error(f"An error occurred: {e}")
-    st.write("### Data Preview")
+            st.error(f"Une erreur s'est produite : {e}")
+    st.write("### Aperçu des données")
     st.dataframe(df)
 else:
-    st.warning("No data found in the MongoDB collection.")
+    st.warning("Aucune donnée trouvée dans la collection MongoDB.")
