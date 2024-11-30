@@ -43,12 +43,12 @@ try:
             #         st.error(f"Échec de la suppression de l'enregistrement avec l'ID '{ad_id}' et le Prix '{price}'.")
 
                 # Rafraîchir l'affichage des données
-                data = list(collection.find({}, {"_id": 0}))  # Récupérer les données mises à jour
-                if data:
-                    df = pd.DataFrame(data)
-                    st.dataframe(df)
-                else:
-                    st.warning("Aucune donnée restante dans la collection.")
+                # data = list(collection.find({}, {"_id": 0}))  # Récupérer les données mises à jour
+                # if data:
+                #     df = pd.DataFrame(data)
+                #     st.dataframe(df)
+                # else:
+                #     st.warning("Aucune donnée restante dans la collection.")
 
             # Permettre à l'utilisateur de modifier un enregistrement
             st.write("### Modifier un Enregistrement")
