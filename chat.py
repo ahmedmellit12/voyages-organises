@@ -69,7 +69,7 @@ if not df.empty:
             st.markdown(message["content"])
 
     # Chat input
-    if user_query := st.chat_input("Posez une question sur les données :"):
+    if user_query := st.chat_input("Posez votre question"):
         # Add user query to chat history
         st.session_state.messages.append({"role": "user", "content": user_query})
         with st.chat_message("user"):
