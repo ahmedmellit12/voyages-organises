@@ -2,95 +2,95 @@ import streamlit as st
 from pymongo import MongoClient
 import pandas as pd
 
-# MongoDB connection
+# Connexion à MongoDB
 connection_string = "mongodb+srv://honorablesvoyages:OJ5m95MyLHGqwOAN@voyagesorganises.x7xz0.mongodb.net/?retryWrites=true&w=majority&appName=voyagesorganises"
 client = MongoClient(connection_string)
 
-# Database and collection
-db = client["voyagesorganises"]  # Database name
-collection = db["voyages"]       # Collection name
+# Base de données et collection
+db = client["voyagesorganises"]  # Nom de la base de données
+collection = db["voyages"]       # Nom de la collection
 
-# Title of the app
-st.title("MongoDB Data Viewer, Editor, and Deletion Tool")
+# Titre de l'application
+st.title("Visualiseur, Éditeur et Outil de Suppression de Données MongoDB")
 
 try:
-    # Fetch data from MongoDB
-    data = list(collection.find({}, {"_id": 0}))  # Exclude the "_id" field
+    # Récupérer les données de MongoDB
+    data = list(collection.find({}, {"_id": 0}))  # Exclure le champ "_id"
 
     if data:
-        # Convert the data to a DataFrame
+        # Convertir les données en DataFrame
         df = pd.DataFrame(data)
 
-        # Show the dataframe
-        st.write("### Data Preview")
+        # Afficher les données
+        st.write("### Aperçu des Données")
         st.dataframe(df)
 
-        # Combine Ad ID and Price for selection
+        # Combiner l'ID d'annonce et le prix pour la sélection
         if "Ad ID" in df.columns and "Prix" in df.columns:
             combined_options = [f"{row['Ad ID']} - {row['Prix']}" for _, row in df.iterrows()]
             
-            # Allow the user to delete a record
-            st.write("### Delete a Record")
-            selected_option_delete = st.selectbox("Select Ad ID and Price to delete", options=combined_options, key="delete")
+            # Permettre à l'utilisateur de supprimer un enregistrement
+            st.write("### Supprimer un Enregistrement")
+            selected_option_delete = st.selectbox("Sélectionnez l'ID et le Prix de l'annonce à supprimer", options=combined_options, key="delete")
 
-            # Button to confirm deletion
-            if st.button("Delete Selected Record"):
+            # Bouton pour confirmer la suppression
+            if st.button("Supprimer l'enregistrement sélectionné"):
                 ad_id, price = selected_option_delete.split(" - ")
                 result = collection.delete_one({"Ad ID": ad_id, "Prix": price})
                 if result.deleted_count > 0:
-                    st.success(f"Record with Ad ID '{ad_id}' and Price '{price}' deleted successfully!")
+                    st.success(f"Enregistrement avec l'ID '{ad_id}' et le Prix '{price}' supprimé avec succès!")
                 else:
-                    st.error(f"Failed to delete the record with Ad ID '{ad_id}' and Price '{price}'.")
+                    st.error(f"Échec de la suppression de l'enregistrement avec l'ID '{ad_id}' et le Prix '{price}'.")
 
-                # Refresh the data display
-                data = list(collection.find({}, {"_id": 0}))  # Fetch updated data
+                # Rafraîchir l'affichage des données
+                data = list(collection.find({}, {"_id": 0}))  # Récupérer les données mises à jour
                 if data:
                     df = pd.DataFrame(data)
                     st.dataframe(df)
                 else:
-                    st.warning("No data left in the collection.")
+                    st.warning("Aucune donnée restante dans la collection.")
 
-            # Allow the user to modify a record
-            st.write("### Modify a Record")
-            selected_option_edit = st.selectbox("Select Ad ID and Price to modify", options=combined_options, key="edit")
+            # Permettre à l'utilisateur de modifier un enregistrement
+            st.write("### Modifier un Enregistrement")
+            selected_option_edit = st.selectbox("Sélectionnez l'ID et le Prix de l'annonce à modifier", options=combined_options, key="edit")
 
-            # Display the selected record
+            # Afficher l'enregistrement sélectionné
             ad_id, price = selected_option_edit.split(" - ")
             record_to_edit = collection.find_one({"Ad ID": ad_id, "Prix": price}, {"_id": 0})
-            st.write("Selected Record:")
+            st.write("Enregistrement Sélectionné :")
             st.json(record_to_edit)
 
-            # Choose a column to modify
-            column_to_edit = st.selectbox("Select Column to Modify", options=df.columns)
+            # Choisir une colonne à modifier
+            column_to_edit = st.selectbox("Sélectionnez une colonne à modifier", options=df.columns)
 
-            # Input the new value
-            new_value = st.text_input(f"Enter new value for {column_to_edit}")
+            # Saisir la nouvelle valeur
+            new_value = st.text_input(f"Entrez la nouvelle valeur pour {column_to_edit}")
 
-            # Button to confirm modification
-            if st.button("Update Record"):
+            # Bouton pour confirmer la modification
+            if st.button("Mettre à jour l'enregistrement"):
                 if new_value.strip():
-                    # Update the record in MongoDB
+                    # Mettre à jour l'enregistrement dans MongoDB
                     update_result = collection.update_one(
                         {"Ad ID": ad_id, "Prix": price},
                         {"$set": {column_to_edit: new_value}}
                     )
                     if update_result.modified_count > 0:
-                        st.success(f"Record with Ad ID '{ad_id}' and Price '{price}' successfully updated!")
+                        st.success(f"Enregistrement avec l'ID '{ad_id}' et le Prix '{price}' mis à jour avec succès!")
                     else:
-                        st.error(f"No changes were made to the record with Ad ID '{ad_id}' and Price '{price}'.")
+                        st.error(f"Aucun changement n'a été apporté à l'enregistrement avec l'ID '{ad_id}' et le Prix '{price}'.")
 
-                    # Refresh the data display
-                    data = list(collection.find({}, {"_id": 0}))  # Fetch updated data
+                    # Rafraîchir l'affichage des données
+                    data = list(collection.find({}, {"_id": 0}))  # Récupérer les données mises à jour
                     if data:
                         df = pd.DataFrame(data)
                         st.dataframe(df)
                     else:
-                        st.warning("No data left in the collection.")
+                        st.warning("Aucune donnée restante dans la collection.")
                 else:
-                    st.error("New value cannot be empty!")
+                    st.error("La nouvelle valeur ne peut pas être vide!")
         else:
-            st.error("Required columns 'Ad ID' and 'Prix' are missing in the data.")
+            st.error("Les colonnes requises 'Ad ID' et 'Prix' sont manquantes dans les données.")
     else:
-        st.warning("No data found in the MongoDB collection.")
+        st.warning("Aucune donnée trouvée dans la collection MongoDB.")
 except Exception as e:
-    st.error(f"An error occurred: {e}")
+    st.error(f"Une erreur s'est produite : {e}")
