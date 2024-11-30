@@ -33,9 +33,6 @@ def fetch_data():
 df = fetch_data()
 
 if not df.empty:
-    st.write("### Data Preview")
-    st.dataframe(df)
-
     # Initialize the LangChain LLM
     llm = OpenAI(temperature=0)
 
@@ -65,5 +62,7 @@ if not df.empty:
             st.write(response)
         except Exception as e:
             st.error(f"An error occurred: {e}")
+    st.write("### Data Preview")
+    st.dataframe(df)
 else:
     st.warning("No data found in the MongoDB collection.")
