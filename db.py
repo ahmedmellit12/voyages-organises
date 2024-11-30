@@ -34,13 +34,13 @@ try:
             selected_option_delete = st.selectbox("Sélectionnez l'ID et le Prix de l'annonce à supprimer", options=combined_options, key="delete")
 
             # Bouton pour confirmer la suppression
-            if st.button("Supprimer l'enregistrement sélectionné"):
-                ad_id, price = selected_option_delete.split(" - ")
-                result = collection.delete_one({"Ad ID": ad_id, "Prix": price})
-                if result.deleted_count > 0:
-                    st.success(f"Enregistrement avec l'ID '{ad_id}' et le Prix '{price}' supprimé avec succès!")
-                else:
-                    st.error(f"Échec de la suppression de l'enregistrement avec l'ID '{ad_id}' et le Prix '{price}'.")
+            # if st.button("Supprimer l'enregistrement sélectionné"):
+            #     ad_id, price = selected_option_delete.split(" - ")
+            #     result = collection.delete_one({"Ad ID": ad_id, "Prix": price})
+            #     if result.deleted_count > 0:
+            #         st.success(f"Enregistrement avec l'ID '{ad_id}' et le Prix '{price}' supprimé avec succès!")
+            #     else:
+            #         st.error(f"Échec de la suppression de l'enregistrement avec l'ID '{ad_id}' et le Prix '{price}'.")
 
                 # Rafraîchir l'affichage des données
                 data = list(collection.find({}, {"_id": 0}))  # Récupérer les données mises à jour
