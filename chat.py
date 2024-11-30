@@ -6,37 +6,34 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 import os
 
-# Définissez votre clé API OpenAI à l'aide des secrets de Streamlit pour une meilleure sécurité
+# Configure OpenAI API key
 os.environ["OPENAI_API_KEY"] = st.secrets["openai"]["api_key"]
 
-# Connexion à MongoDB
+# MongoDB connection
 connection_string = "mongodb+srv://honorablesvoyages:OJ5m95MyLHGqwOAN@voyagesorganises.x7xz0.mongodb.net/?retryWrites=true&w=majority&appName=voyagesorganises"
 client = MongoClient(connection_string)
 
-# Base de données et collection
-db = client["voyagesorganises"]  # Nom de la base de données
-collection = db["voyages"]       # Nom de la collection
+# Database and collection
+db = client["voyagesorganises"]  # Database name
+collection = db["voyages"]       # Collection name
 
-# Application Streamlit
+# Streamlit app title
 st.title("Conseiller IA pour Voyages Organisés")
 
 @st.cache_data
 def fetch_data():
-    """Récupère les données de MongoDB et les convertit en DataFrame Pandas."""
-    data = list(collection.find({}, {"_id": 0}))  # Exclure le champ "_id"
-    if data:
-        return pd.DataFrame(data)
-    else:
-        return pd.DataFrame()  # Retourner un DataFrame vide si aucune donnée
+    """Fetch data from MongoDB and return as a Pandas DataFrame."""
+    data = list(collection.find({}, {"_id": 0}))  # Exclude "_id" field
+    return pd.DataFrame(data) if data else pd.DataFrame()
 
-# Récupération des données de la base MongoDB
+# Fetch data from MongoDB
 df = fetch_data()
 
 if not df.empty:
-    # Initialiser le LLM de LangChain
+    # Initialize the LLM
     llm = OpenAI(temperature=0)
 
-    # Définir un modèle d'invite personnalisé pour interagir avec les données
+    # Define a custom prompt
     prompt_template = """
         Vous êtes un expert en voyages avec une connaissance approfondie du marché marocain. Vous avez accès aux données suivantes collectées à partir de la bibliothèque de publicités Meta :
         {data}
@@ -45,23 +42,34 @@ if not df.empty:
 
         Question de l'utilisateur : {question}
     """
-
     prompt = PromptTemplate(input_variables=["data", "question"], template=prompt_template)
 
-    # Définir le LLMChain
+    # Define the LLMChain
     llm_chain = LLMChain(llm=llm, prompt=prompt)
 
-    # Interface utilisateur pour poser une question
-    user_input = st.text_input("Posez une question sur les données :", "")
+    # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-    if user_input:
+    # Display chat history
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    # Input box for user message
+    if user_input := st.chat_input("Posez une question sur les données :"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
+        # Generate a response using LLMChain
         try:
-            # Exécuter LLMChain avec la question de l'utilisateur et les données
             response = llm_chain.run({"data": df.to_string(index=False), "question": user_input})
-            st.write("### Réponse :")
-            st.write(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})
         except Exception as e:
-            st.error(f"Une erreur s'est produite : {e}")
+            error_message = f"Une erreur s'est produite : {e}"
+            st.session_state.messages.append({"role": "assistant", "content": error_message})
+
+    # Show data overview
     st.write("### Aperçu des données")
     st.dataframe(df)
 else:
