@@ -46,7 +46,7 @@ if not df.empty:
         Analysez ces données en combinant votre expertise et votre compréhension du marché. Fournissez une réponse détaillée et exploitable à la question de l'utilisateur. Mettez en évidence les tendances, modèles tarifaires, destinations populaires, activités prisées, et tout autre élément pertinent permettant à Ahmed, responsable des voyages organisés chez *Honorable Voyages*, d'optimiser l'offre et la stratégie de l'entreprise.  
 
         Votre réponse doit être :  
-        - **Concise** (maximum 100 mots)  
+        - **Concise (entre 30 et 80 mots)**
         - **Clair et structuré**  
         - **Basé sur les données fournies et votre expertise**  
 
