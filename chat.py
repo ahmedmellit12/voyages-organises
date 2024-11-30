@@ -1,12 +1,9 @@
 import streamlit as st
 from pymongo import MongoClient
 import pandas as pd
-from langchain.agents import create_pandas_dataframe_agent
 from langchain.llms import OpenAI
-
-# Set your OpenAI API key
-import os
-os.environ["OPENAI_API_KEY"] = "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"
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
 
 # MongoDB connection
 connection_string = "mongodb+srv://honorablesvoyages:OJ5m95MyLHGqwOAN@voyagesorganises.x7xz0.mongodb.net/?retryWrites=true&w=majority&appName=voyagesorganises"
@@ -16,8 +13,11 @@ client = MongoClient(connection_string)
 db = client["voyagesorganises"]  # Database name
 collection = db["voyages"]       # Collection name
 
-# Streamlit app
-st.title("MongoDB Chatbot with LangChain")
+# Load OpenAI API key from secrets
+import os
+os.environ["OPENAI_API_KEY"] = st.secrets["openai"]["api_key"]
+
+st.title("Chat with Your MongoDB Data")
 
 @st.cache_data
 def fetch_data():
@@ -35,18 +35,28 @@ if not df.empty:
     st.write("### Data Preview")
     st.dataframe(df)
 
-    # Initialize the LangChain agent
+    # Initialize LLM
     st.write("### Chat with your Data")
-    llm = OpenAI(temperature=0)  # LLM setup
-    agent = create_pandas_dataframe_agent(llm, df, verbose=True)
+    llm = OpenAI(temperature=0)
 
-    # Chat interface
+    # Define a custom prompt template
+    prompt_template = """
+    You are an AI assistant with access to the following data:
+    {data}
+
+    Please answer the user's question:
+    {question}
+    """
+    prompt = PromptTemplate(input_variables=["data", "question"], template=prompt_template)
+    llm_chain = LLMChain(llm=llm, prompt=prompt)
+
+    # User input for questions
     user_input = st.text_input("Ask a question about the data:", "")
 
     if user_input:
         try:
-            # Get response from the LangChain agent
-            response = agent.run(user_input)
+            # Generate a response using LLMChain
+            response = llm_chain.run({"data": df.to_string(), "question": user_input})
             st.write("### Response:")
             st.write(response)
         except Exception as e:
