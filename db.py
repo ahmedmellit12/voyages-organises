@@ -30,10 +30,10 @@ try:
             combined_options = [f"{row['Ad ID']} - {row['Prix']}" for _, row in df.iterrows()]
             
             # Permettre à l'utilisateur de supprimer un enregistrement
-            st.write("### Supprimer un Enregistrement")
-            selected_option_delete = st.selectbox("Sélectionnez l'ID et le Prix de l'annonce à supprimer", options=combined_options, key="delete")
+            # st.write("### Supprimer un Enregistrement")
+            # selected_option_delete = st.selectbox("Sélectionnez l'ID et le Prix de l'annonce à supprimer", options=combined_options, key="delete")
 
-            # Bouton pour confirmer la suppression
+            # # Bouton pour confirmer la suppression
             # if st.button("Supprimer l'enregistrement sélectionné"):
             #     ad_id, price = selected_option_delete.split(" - ")
             #     result = collection.delete_one({"Ad ID": ad_id, "Prix": price})
@@ -42,13 +42,13 @@ try:
             #     else:
             #         st.error(f"Échec de la suppression de l'enregistrement avec l'ID '{ad_id}' et le Prix '{price}'.")
 
-                # Rafraîchir l'affichage des données
-                # data = list(collection.find({}, {"_id": 0}))  # Récupérer les données mises à jour
-                # if data:
-                #     df = pd.DataFrame(data)
-                #     st.dataframe(df)
-                # else:
-                #     st.warning("Aucune donnée restante dans la collection.")
+            #     # Rafraîchir l'affichage des données
+            #     data = list(collection.find({}, {"_id": 0}))  # Récupérer les données mises à jour
+            #     if data:
+            #         df = pd.DataFrame(data)
+            #         st.dataframe(df)
+            #     else:
+            #         st.warning("Aucune donnée restante dans la collection.")
 
             # Permettre à l'utilisateur de modifier un enregistrement
             st.write("### Modifier un Enregistrement")
