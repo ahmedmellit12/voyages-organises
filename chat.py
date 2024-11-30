@@ -41,11 +41,12 @@ if not df.empty:
 
     # Define a custom prompt template for interacting with the data
     prompt_template = """
-    You are an intelligent assistant with access to the following data:
-    {data}
+        You are an expert travel consultant with deep knowledge of the Moroccan travel market. You have access to the following data collected from Meta Ads Library:
+        {data}
 
-    Answer the user's question:
-    {question}
+        Please analyze the data and provide a detailed answer to the user's question. Make sure to highlight trends, pricing patterns, popular destinations, activities, and other important insights that can help Ahmed make better decisions about organizing trips to Morocco.
+
+        User's Question: {question}
     """
 
     prompt = PromptTemplate(input_variables=["data", "question"], template=prompt_template)
