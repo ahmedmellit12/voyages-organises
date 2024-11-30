@@ -51,7 +51,7 @@ if not df.empty:
         - Tout autre élément pertinent pour aider Ahmed, responsable des voyages organisés chez *Honorable Voyages*, à optimiser l'offre et la stratégie de l'entreprise.
 
         Votre réponse doit être :  
-        - **Concise** (entre 30 et 150 mots)  
+        - **Concise** (entre 30 et 100 mots)  
         - **Clair, précis et structuré**  
         - **Basé sur les données fournies et votre expertise**
 
