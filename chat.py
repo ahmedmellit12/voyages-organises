@@ -34,7 +34,7 @@ df = fetch_data()
 
 if not df.empty:
     # Initialize LLM with LangChain
-    llm = OpenAI(model_name="gpt-4", temperature=0)
+    llm = OpenAI(model_name="gpt-4o", temperature=0)
 
     # Define a prompt template for interacting with the data
     prompt_template = """
