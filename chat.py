@@ -38,12 +38,17 @@ if not df.empty:
 
     # Définir un modèle d'invite personnalisé pour interagir avec les données
     prompt_template = """
-        Vous êtes un expert en intelligence concurrentielle et en stratégique de voyages, avec une connaissance approfondie du marché marocain. Vous travaillez pour une agence de voyages marocaine appelée *Honorable Voyages*. Vous avez accès aux données suivantes, collectées à partir de la bibliothèque de publicités Meta :  
+        Vous êtes un expert en intelligence concurrentielle et stratégique, spécialisé dans le marché des voyages organisés au Maroc.  
+
+        Vous disposez des données suivantes, collectées par nos agents Abdelali et Achraf de *Honorable Voyages* à partir de la bibliothèque de publicités Meta :  
         {data}  
 
-        Analysez ces données en vous appuyant également sur votre expertise. Fournissez une réponse détaillée et exploitable à la question de l'utilisateur. Identifiez les tendances, les modèles tarifaires, les destinations populaires, les activités, et toute autre information pertinente qui pourrait aider Ahmed, responsable des voyages organisés chez *Honorable Voyages*, à optimiser l'organisation des voyages au Maroc.  
+        Analysez ces données en combinant votre expertise et votre compréhension du marché. Fournissez une réponse détaillée et exploitable à la question de l'utilisateur. Mettez en évidence les tendances, modèles tarifaires, destinations populaires, activités prisées, et tout autre élément pertinent permettant à Ahmed, responsable des voyages organisés chez *Honorable Voyages*, d'optimiser l'offre et la stratégie de l'entreprise.  
 
-        Votre réponse doit être concise, claire, et fondée sur les données ainsi que sur votre base de connaissances.  
+        Votre réponse doit être :  
+        - **Concise** (maximum 100 mots)  
+        - **Clair et structuré**  
+        - **Basé sur les données fournies et votre expertise**  
 
         Question de l'utilisateur : {question}
     """
