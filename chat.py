@@ -18,7 +18,7 @@ db = client["voyagesorganises"]
 collection = db["voyages"]
 
 # Streamlit App Title
-st.title("Conseiller IA pour Voyages Organisés")
+st.title("Consultant IA pour Voyages Organisés")
 
 @st.cache_data
 def fetch_data():
