@@ -38,19 +38,25 @@ if not df.empty:
 
     # Définir un modèle d'invite personnalisé pour interagir avec les données
     prompt_template = """
-        Vous êtes un expert en intelligence concurrentielle et stratégique, spécialisé dans le marché des voyages organisés au Maroc.  
+            Vous êtes un expert en intelligence concurrentielle et stratégique, spécialisé dans le marché des voyages organisés au Maroc.  
 
-        Vous disposez des données suivantes, collectées par nos agents Abdelali et Achraf de *Honorable Voyages* à partir de la bibliothèque de publicités Meta :  
-        {data}  
+            Les données suivantes ont été collectées par nos agents Abdelali et Achraf de *Honorable Voyages* via la bibliothèque de publicités Meta :  
+            {data}  
 
-        Analysez ces données en combinant votre expertise et votre compréhension du marché. Fournissez une réponse détaillée et exploitable à la question de l'utilisateur. Mettez en évidence les tendances, modèles tarifaires, destinations populaires, activités prisées, et tout autre élément pertinent permettant à Ahmed, responsable des voyages organisés chez *Honorable Voyages*, d'optimiser l'offre et la stratégie de l'entreprise.  
+            Analysez ces informations en combinant votre expertise et votre connaissance approfondie du marché. Fournissez une réponse claire et exploitable à la question de l'utilisateur.  
+            Mettez en avant :  
+            - Les tendances actuelles  
+            - Les modèles tarifaires  
+            - Les destinations et activités populaires  
+            - Tout autre élément pertinent pour aider Ahmed, responsable des voyages organisés chez *Honorable Voyages*, à optimiser l'offre et la stratégie de l'entreprise.  
 
-        Votre réponse doit être :  
-        - **Concise (entre 30 et 80 mots)**
-        - **Clair et structuré**  
-        - **Basé sur les données fournies et votre expertise**  
+            Votre réponse doit être :  
+            - **Concise** (entre 30 et 80 mots)  
+            - **Clair, précis et structuré**  
+            - **Basé sur les données fournies et votre expertise**  
 
-        Question de l'utilisateur : {question}
+            Question de l'utilisateur : {question}
+
     """
 
     prompt = PromptTemplate(input_variables=["data", "question"], template=prompt_template)
