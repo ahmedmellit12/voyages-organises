@@ -6,37 +6,42 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 import os
 
-# Configure OpenAI API Key
-os.environ["OPENAI_API_KEY"] = st.secrets["openai"]["api_key"]
+# Configure OpenAI API Key securely
+@st.cache_resource
+def get_openai_api_key():
+    return st.secrets["openai"]["api_key"]
+
+os.environ["OPENAI_API_KEY"] = get_openai_api_key()
 
 # MongoDB Connection
-connection_string = "mongodb+srv://honorablesvoyages:OJ5m95MyLHGqwOAN@voyagesorganises.x7xz0.mongodb.net/?retryWrites=true&w=majority&appName=voyagesorganises"
-client = MongoClient(connection_string)
+@st.cache_resource
+def get_mongo_client():
+    connection_string = (
+        "mongodb+srv://honorablesvoyages:OJ5m95MyLHGqwOAN@voyagesorganises.x7xz0.mongodb.net/"
+        "?retryWrites=true&w=majority&appName=voyagesorganises"
+    )
+    return MongoClient(connection_string)
 
-# Database and collection
+client = get_mongo_client()
 db = client["voyagesorganises"]
 collection = db["voyages"]
 
-# Streamlit App Title
-st.title("Consultant IA pour l'Analyse du Marché des Voyages Organisés")
-
+# Fetch and cache data
 @st.cache_data
 def fetch_data():
-    """Fetch data from MongoDB and convert it into a Pandas DataFrame."""
-    data = list(collection.find({}, {"_id": 0}))  # Exclude "_id"
-    if data:
-        return pd.DataFrame(data)
-    else:
-        return pd.DataFrame()  # Return empty DataFrame if no data
+    """Fetch data from MongoDB and return it as a Pandas DataFrame."""
+    data = list(collection.find({}, {"_id": 0}))
+    return pd.DataFrame(data) if data else pd.DataFrame()
 
-# Fetch data from MongoDB
+# Initialize Streamlit App
+st.title("Consultant IA pour l'Analyse du Marché des Voyages Organisés")
+
+# Fetch data
 df = fetch_data()
 
 if not df.empty:
     # Initialize LLM with LangChain
     llm = OpenAI(temperature=0)
-
-    # Define a prompt template for interacting with the data
     prompt_template = """
         Vous êtes un expert en intelligence concurrentielle et stratégique, spécialisé dans le marché des voyages organisés au Maroc.
 
@@ -55,8 +60,6 @@ if not df.empty:
         Question de l'utilisateur : {question}
     """
     prompt = PromptTemplate(input_variables=["data", "question"], template=prompt_template)
-
-    # Define the LLMChain
     llm_chain = LLMChain(llm=llm, prompt=prompt)
 
     # Initialize chat history in session state
