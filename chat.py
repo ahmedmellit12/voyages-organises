@@ -43,19 +43,18 @@ if not df.empty:
     # Initialize LLM with LangChain
     llm = OpenAI(temperature=0)
     prompt_template = """
-        Vous êtes un expert en intelligence concurrentielle et stratégique, spécialisé dans le marché des voyages organisés au Maroc.
+        Vous êtes un expert en intelligence concurrentielle et stratégique, avec une spécialisation dans le marché des voyages organisés au Maroc.  
 
-        Les données suivantes ont été collectées par nos agents Abdelali et Achraf de *Honorable Voyages* via la bibliothèque de publicités Meta :  
-        {data}
+        Les données suivantes ont été collectées par nos agents, Abdelali, Ahmed et Achraf de *Honorable Voyages*, via la bibliothèque de publicités Meta :  
+        {data}  
 
-        Analysez ces informations en combinant votre expertise et votre connaissance approfondie du marché. Fournissez une réponse claire et exploitable à la question de l'utilisateur.  
-        Mettez en avant :  
-        - Les tendances actuelles  
-        - Les modèles tarifaires  
-        - Les destinations et activités populaires  
-        - Tout autre élément pertinent pour aider Ahmed, responsable des voyages organisés chez *Honorable Voyages*, à optimiser l'offre et la stratégie de l'entreprise.
+        En combinant ces informations avec votre expertise approfondie du marché :  
+        1. Identifiez les **tendances actuelles** dans le secteur.  
+        2. Analysez les **modèles tarifaires** observés.  
+        3. Mettez en lumière les **destinations et activités populaires**.  
+        4. Proposez d'autres **insights stratégiques pertinents** pour optimiser l'offre et la stratégie de *Honorable Voyages*.  
 
-        Votre réponse doit être entre 30 et 100 mots.
+        Votre analyse doit être concise (30 à 100 mots), directement exploitable par Ahmed, responsable des voyages organisés chez *Honorable Voyages*.  
 
         Question de l'utilisateur : {question}
     """
