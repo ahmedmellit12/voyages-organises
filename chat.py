@@ -34,7 +34,7 @@ def fetch_data():
     return pd.DataFrame(data) if data else pd.DataFrame()
 
 # Initialize Streamlit App
-st.title("Consultant IA pour l'Analyse du Marché des Voyages Organisés")
+# st.title("Consultant IA pour l'Analyse du Marché des Voyages Organisés")
 
 # Fetch data
 df = fetch_data()
