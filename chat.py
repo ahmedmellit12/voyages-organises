@@ -64,7 +64,7 @@ if not df.empty:
 
     # Initialize chat history in session state
     if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": "assistant", "content": "Bonjour, Comment puis-je vous aider ?"}]
+        st.session_state.messages = [{"role": "assistant", "content": "Bonjour, je suis un agent IA spécialisé en intelligence concurrentielle et stratégique dans le domaine du tourisme. Comment puis-je vous aider ?"}]
 
     # Display chat history
     for message in st.session_state.messages:
